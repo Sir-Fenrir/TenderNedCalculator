@@ -20,49 +20,55 @@ public class Main {
 
 
         //Get input
-        calculation = userInput.nextLine().trim();
+        calculation = userInput.nextLine();
 
-
-        calculate(calculation);
+        Calculator calculator = new Calculator();
+        calculator.newExpression(calculation);
+        calculator.calculate();
+        System.out.println("Result: " + calculator.getResult());
 
 
     }
 
-    public static void calculate(String calculation){
-        int input1, input2, output;
-        char operator;
-        String[] values;
 
-        //Locate operator, exit if no valid operator found
-        if(calculation.contains("+")){
-            operator = '+';
-            values = calculation.split("\\+");
-        }
-        else if (calculation.contains("-")){
-            operator = '-';
-            values = calculation.split("-");
-        }
-        else if (calculation.contains("*")){
-            operator = '*';
-            values = calculation.split("\\*");
-        }
-        else if (calculation.contains("/")){
-            operator = '/';
-            values = calculation.split("/");
-        }
-        else if (calculation.contains("^")){
-            operator = '^';
-            values = calculation.split("\\^");
-        }
-        else {
-            System.out.println("No valid operator provided.");
+}
+
+ class Calculator{
+    private String expression;
+    private String[] subExpressions;
+    private int result;
+    private char lastOperator;
+
+    public Calculator(){
+
+    }
+
+    public Calculator(String expression){
+        this.expression = expression;
+        parse();
+    }
+
+    public void newExpression(String expression){
+        this.expression = expression;
+        parse();
+    }
+
+    public int getResult(){
+        return result;
+    }
+
+    public void calculate(){
+        if(subExpressions == null) {
+            result = Integer.parseInt(expression);
             return;
         }
+        for(int i=subExpressions.length-1; i > 0; i--){
+            result = performOperation(Integer.parseInt(subExpressions[i-1]), Integer.parseInt(subExpressions[i]), lastOperator);
+        }
+    }
 
-        //Perform calculation
-        input1 = Integer.parseInt(values[0]);
-        input2 = Integer.parseInt(values[1]);
-
+    private int performOperation(int input1, int input2, char operator){
+        int output = 0;
         switch (operator) {
             case '+' -> output = input1 + input2;
             case '-' -> output = input1 - input2;
@@ -70,11 +76,36 @@ public class Main {
             case '/' -> output = input1 / input2;
             case '^' -> output = (int) Math.pow(input1,input2);
             default -> {
-                System.out.println("Error: Unexpected exit.");
-                output = 0;
+                System.out.println("Error: No valid operator provided. Input1: " + input1 + " Input2: " + input2 + " Operator: " + operator );
             }
         }
-        System.out.print(input1 + " " + operator + " " + input2 + " = " + output);
+        return output;
     }
 
+    private void parse(){
+        //Locate operator, exit if no valid operator found
+        if(expression.contains("+")){
+            subExpressions = expression.split("\\+");
+            lastOperator = '+';
+        }
+        else if (expression.contains("-")){
+            subExpressions = expression.split("-");
+            lastOperator = '-';
+        }
+        else if (expression.contains("*")){
+            subExpressions = expression.split("\\*");
+            lastOperator = '*';
+        }
+        else if (expression.contains("/")){
+            subExpressions = expression.split("/");
+            lastOperator = '/';
+        }
+        else if (expression.contains("^")){
+            subExpressions = expression.split("\\^");
+            lastOperator = '^';
+        }
+        else {
+            lastOperator = 'E';//Indicating ERROR
+        }
+    }
 }
