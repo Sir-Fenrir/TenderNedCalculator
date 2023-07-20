@@ -38,7 +38,7 @@ class Calculator{
             if(isOperator(currentExpression)){
                 subResult = performOperation(Integer.parseInt(subExpressions.remove(i-2)) , Integer.parseInt(subExpressions.remove(i-2)) ,currentExpression.charAt(0));//index for both is i-2 because after remove, next element moves down by 1
                 subExpressions.set(i-2, Integer.toString(subResult));
-                i = i-2; //we have removed 2 elements from the list, so I should go down by 2 as well
+                i = i-2; //we have removed 2 elements from the list, so i should go down by 2 as well
             }
         }
         result = subResult;
